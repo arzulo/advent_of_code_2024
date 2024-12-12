@@ -14,13 +14,20 @@ class InputParser {
         return this.__input;
     }
 
-    splitLines(_input = this.__input) {
-        this.__input = _input.split(/\r?\n/);
+    splitLines() {
+        this.__input = this.__input.split(/\r?\n/);
         return this;
     }
 
-    parseNumArr(_input = this.__input) {
-        this.__input = _input.map(e => {
+    splitColumns(seperator = '') {
+        for(let i = 0; i < this.__input.length; i++) {
+            this.__input[i] = this.__input[i].split(seperator);
+        }
+        return this;
+    }
+
+    parseNumArr() {
+        this.__input = this.__input.map(e => {
             e = e.split(/\s+/);
             e = e.map(_e => {
                 return Number(_e)
