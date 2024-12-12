@@ -2,7 +2,7 @@ const InputParser = require('../src/InputParser');
 
 parser = new InputParser();
 
-let inputArr = parser.splitLines();
+let inputArr = parser.splitLines().parseNumArr().input;
 
 // Let's create two list to push elements onto 
 // Could create a min heap for better efficiency, but too lazy. we will just make
@@ -10,15 +10,6 @@ let inputArr = parser.splitLines();
 let leftList = [];
 let rightList = [];
 
-// The the input into a suitable format... each line is an array of each list, 
-// converted to a number
-inputArr = inputArr.map( e => {
-	e = e.split(/\s+/);
-	e = e.map( _e => {
-		return Number(_e)
-	})
-	return e
-});
 
 // Use a map to keep count for part 2
 let rightMap = new Map();
