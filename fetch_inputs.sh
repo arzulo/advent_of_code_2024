@@ -2,8 +2,10 @@
 # For this to work, you need to sign into https://adventofcode.com and download you cookies to a file, `cookies.txt` 
 # and place in the `src` directory
 
+# Use this firefox extension to get cookies: https://addons.mozilla.org/en-US/firefox/addon/cookies-txt/
+
 ## Constants
-REFETCH=true
+REFETCH=false
 TEMPLATE_PATH="./src/problem_template.js"
 
 # Determine up to what date to get inputs for
