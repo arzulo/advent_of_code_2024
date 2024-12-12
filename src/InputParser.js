@@ -37,6 +37,19 @@ class InputParser {
         return this;
     }
 
+    findRowSeperation() {
+        let input1;
+        let input2;
+        for(let i = 0; i < this.__input.length; i++) {
+            // Look for the empty string row
+            if(this.__input[i].length===0) {
+                input1 = this.__input.slice(0, i);
+                input2 = this.__input.slice(i+1, this.__input.length);
+                return [input1, input2];
+            }
+        }
+    }
+
 }
 
 // Allow this class to be used by other files
