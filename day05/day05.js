@@ -41,48 +41,63 @@ for (let i = 0; i < orderRulesInput.length; i++) {
 
 // Loop through the manual sets now and check for valid page ordering rules
 let resP1 = 0;
-for(let i = 0; i < manualsInput.length; i++) {
+let resP2 = 0;
+for (let i = 0; i < manualsInput.length; i++) {
     let manualPages = manualsInput[i];
 
     // Loop twice through to check before/after pages
-    let validManual = true;
-    for(let j = 0; j < manualPages.length; j++) {
-        if(!validManual) {
-            break;
+    let validManualP1 = true;
+    var validManualP2 = false;
+
+    // We did a swap, retry until it is valid
+    while(!validManualP2) {
+        validManualP2 = true;
+        for (var j = 0; j < manualPages.length; j++) {
+            let check = orderRules.get(manualPages[j]);
+            for (var k = 0; k < manualPages.length; k++) {
+                // skip checking over self
+                if (k === j) {
+                    continue;
+                }
+                // Check before rules
+                if (k < j) {
+                    if (!check.before.has(manualPages[k])) {
+                        // INVALID - set flag
+                        validManualP1 = false;
+                        validManualP2 = false;
+                        break;
+                    }
+                }
+                if (k > j) {
+                    if (!check.after.has(manualPages[k])) {
+                        // INVALID - set flag
+                        validManualP1 = false;
+                        validManualP2 = false;
+                        break;
+                    }
+                }
+            }
+            if (!validManualP2) {
+                break;
+            }
         }
-        let check = orderRules.get(manualPages[j]);
-        for(let k=0; k < manualPages.length; k++) {
-            // skip checking over self
-            if(k === j) {
-                continue;
-            }
-            // Check before rules
-            if(k<j) {
-                if(!check.before.has(manualPages[k])) {
-                    // INVALID - set flag
-                    validManual = false;
-                    break;
-                }
-            }
-            if(k>j) {
-                if(!check.after.has(manualPages[k])) {
-                    // INVALID - set flag
-                    validManual = false;
-                    break;
-                }
-            }
+        // Swap the pages that failed
+        if(!validManualP2) {
+            let temp = manualPages[k];
+            manualPages[k] = manualPages[j];
+            manualPages[j] = temp;
         }
     }
-
     // Manual is valid, grab the number in the middle...
-    if(validManual) {
-        let midInd = Math.floor(manualPages.length/2);
-        resP1+=manualPages[midInd];
+    let midInd = Math.floor(manualPages.length / 2);
+    if (validManualP1) {
+        // let midInd = Math.floor(manualPages.length / 2);
+        resP1 += manualPages[midInd];
+    } else {
+        resP2 += manualPages[midInd];
     }
 }
 
-
 // Answers
 console.log(`Part 1 answer: ${resP1}`);
-// console.log(`Part 2 answer: ${similarity}`);
-	
+console.log(`Part 2 answer: ${resP2}`);
