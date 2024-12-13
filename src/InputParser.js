@@ -35,9 +35,11 @@ class InputParser {
         return this;
     }
 
-    parseNumArr() {
+    // Splits an array of number strings into a 2D array with a provided seperator, 
+    // converting each string to number in the process.
+    parseNumArr(sep = /\s+/) {
         this.__input = this.__input.map(e => {
-            e = e.split(/\s+/);
+            e = e.split(sep);
             e = e.map(_e => {
                 return Number(_e)
             })
