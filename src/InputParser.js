@@ -2,9 +2,18 @@ const fs = require('fs');
 
 class InputParser {
 
-    constructor(file = './input.txt', encoding = 'utf8') {
+    __encoding = 'utf8';
+    __file = './input.txt'
+    constructor(input) {
+        // Handed in an input array
+        if(Array.isArray(input)) {
+            this.__input = input;
+            return;
+        } 
+
+        // Pulling in an input from input.txt 
         try {
-            this.__input = fs.readFileSync(file, encoding).trim();
+            this.__input = fs.readFileSync(this.__file, this.__encoding).trim();
         } catch (err) {
             console.error(err)
         }
