@@ -18,9 +18,8 @@ numbers = new InputParser(numbers).parseNumArr().input;
 let part1 = 0;
 let part2 = 0;
 
-
 // DFS search applying each operation to the array, hold onto the index
-let dfs = function (testVal, currVal, nums, ind) {
+let dfs = function (testVal, currVal, nums, ind, part2 = false) {
     // Went over the test value target
     if (currVal > testVal) {
         return false;
@@ -35,13 +34,20 @@ let dfs = function (testVal, currVal, nums, ind) {
         }
     }
     // add 
-    if (dfs(testVal, currVal + nums[ind], nums, ind + 1)) {
+    if (dfs(testVal, currVal + nums[ind], nums, ind + 1, part2)) {
         return true;
     }
     // multiply
-    if (dfs(testVal, currVal * nums[ind], nums, ind + 1)) {
+    if (dfs(testVal, currVal * nums[ind], nums, ind + 1, part2)) {
         return true;
     }
+    // Concatenation (part2)
+    if(part2) {
+        if(dfs(testVal, Number(String(currVal) + String(nums[ind])), nums, ind + 1, part2)) {
+            return true;
+        }
+    }
+
     return false;
 
 }
@@ -49,8 +55,10 @@ let dfs = function (testVal, currVal, nums, ind) {
 for (let i = 0; i < testValue.length; i++) {
     // If true, add up the numbers
     if (dfs(testValue[i], numbers[i][0], numbers[i], 1)) {
-        // part1 += numbers[i].reduce((a, b) => a + b);
         part1 += testValue[i];
+    }
+    if (dfs(testValue[i], numbers[i][0], numbers[i], 1, true)) {
+        part2 += testValue[i];
     }
 }
 
