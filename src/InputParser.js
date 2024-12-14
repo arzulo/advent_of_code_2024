@@ -11,9 +11,13 @@ class InputParser {
             return;
         } 
 
+        let _file = this.__file;;
+        if(typeof input === "string") {
+            _file = input;
+        }
         // Pulling in an input from input.txt 
         try {
-            this.__input = fs.readFileSync(this.__file, this.__encoding).trim();
+            this.__input = fs.readFileSync(_file, this.__encoding).trim();
         } catch (err) {
             console.error(err)
         }
