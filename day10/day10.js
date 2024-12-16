@@ -24,8 +24,9 @@ let addVisit = function(r, c) {
 }
 
 
+let part1Check = true;
 let dfs = function(score, r, c) {
-    if(!addVisit(r,c)) {
+    if(part1Check && !addVisit(r,c)) {
         return 0;
     }
     let val = input[r][c];
@@ -71,7 +72,10 @@ let dfs = function(score, r, c) {
 for(var i = 0; i < height; i++) {
     for(var j = 0; j < width; j++) {
         if(input[i][j] === 0) {
+            part1Check = true;
             part1 += dfs(0, i, j);
+            part1Check = false;
+            part2 += dfs(0, i, j);
         }
         visitedSet.clear();
     }
