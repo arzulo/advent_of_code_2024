@@ -1,6 +1,6 @@
 const InputParser = require('../src/InputParser');
 
-let parser = new InputParser('input2.txt');
+let parser = new InputParser();
 let input = parser.splitLines().splitColumns().input;
 
 
@@ -34,30 +34,36 @@ let dirSides = new Map();
 let initDirSides = function() {
     // Clear the sides out of the map
     dirSides.clear();
-    // Initialize 2 new map entries, indicating each horizontal or vertical sides
-    dirSides.set(0, new Set()); // Even is for Vertical (up/down)
-    dirSides.set(1, new Set()); // Odd is for horizontal (left/right)
+    // Initialize 4 new map entries, indicating each horizontal or vertical sides
+    dirSides.set(0, new Set()); // Even is for horizontal 
+    dirSides.set(1, new Set()); // Odd is for vertical 
+    dirSides.set(2, new Set()); // Even is for horizontal 
+    dirSides.set(3, new Set()); // Odd is for vertical
 }
 let determineSide = function(r, c, dir) {
     let key = makeKey(r,c);
     let k1;
     let k2;
-    let orientation = dir % 2;
-    switch(orientation) {
+    switch(dir) {
         case 1:
+        case 3:
             k1 = makeKey(r-1, c);
             k2 = makeKey(r+1, c);
             break;
         case 0:
+        case 2:
             k1 = makeKey(r, c-1);
             k2 = makeKey(r, c+1);
             break;
     }
 
     // Check if this perimeter is a continuation of a side already here
-    // increment sides if so
-    let _dirSet = dirSides.get(orientation);
-    if(!_dirSet.has(k1) && !_dirSet.has(k2)) {
+    // --increment sides if so
+    // --decrement if there is a side on both of us (it means we started a new side, but ran into an existing one)
+    let _dirSet = dirSides.get(dir);
+    if(_dirSet.has(k1) && _dirSet.has(k2)) {
+        sides--;
+    } else if(!_dirSet.has(k1) && !_dirSet.has(k2)) {
         sides++
     }
     // Add this new perimeter fence to the set
@@ -83,7 +89,6 @@ let dfs = function(plant, r, c, dir) {
         area++;
     }
 
-
     for(let i = 0; i < dirVec.length; i++) {
         let _dir = dirVec[i];
         dfs(plant, r+_dir[0], c+_dir[1], i);
@@ -102,8 +107,7 @@ for(var i = 0; i < width; i++) {
         // Calculate the price for this plant region
         part1 += (perimeter*area);
         part2 += (area*sides);
-        // Reset perimeter and area
-        console.log(`--Plant ${plant} has--\nArea: Sides: ${sides}\nPerimeter: ${perimeter}\nArea: ${area}`);
+        // Reset perimeter, area and sides
         currSide = -1;
         sides = 0;
         perimeter = 0;
