@@ -1,6 +1,6 @@
 const InputParser = require('../src/InputParser');
 
-let parser = new InputParser();
+let parser = new InputParser('input2.txt');
 let input = parser.splitLines().splitColumns().input;
 
 
@@ -14,9 +14,12 @@ let height = input[0].length;
 // Set used to keep track of which spaces have been visited already
 let visited = new Set();
 
-let addVisit = function(r,c) {
-    let _key = `${r}_${c}`;
+let makeKey = function(r,c) {
+    return `${r}_${c}`;
 
+}
+let addVisit = function(r,c) {
+    let _key = makeKey(r,c);
     if(visited.has(_key)) {
         return false;
     } else {
@@ -27,13 +30,51 @@ let addVisit = function(r,c) {
 
 // Directional vectors in order: up, right, down, left
 let dirVec = [ [-1, 0], [0, 1], [1, 0], [0, -1]];
+let dirSides = new Map();
+let initDirSides = function() {
+    // Clear the sides out of the map
+    dirSides.clear();
+    // Initialize 2 new map entries, indicating each horizontal or vertical sides
+    dirSides.set(0, new Set()); // Even is for Vertical (up/down)
+    dirSides.set(1, new Set()); // Odd is for horizontal (left/right)
+}
+let determineSide = function(r, c, dir) {
+    let key = makeKey(r,c);
+    let k1;
+    let k2;
+    let orientation = dir % 2;
+    switch(orientation) {
+        case 1:
+            k1 = makeKey(r-1, c);
+            k2 = makeKey(r+1, c);
+            break;
+        case 0:
+            k1 = makeKey(r, c-1);
+            k2 = makeKey(r, c+1);
+            break;
+    }
+
+    // Check if this perimeter is a continuation of a side already here
+    // increment sides if so
+    let _dirSet = dirSides.get(orientation);
+    if(!_dirSet.has(k1) && !_dirSet.has(k2)) {
+        sides++
+    }
+    // Add this new perimeter fence to the set
+    _dirSet.add(key);
+
+}
 let perimeter = 0;
 let area = 0;
+let sides = 0;
+let currSide = -1;
 
-let dfs = function(plant, r, c) { 
+let dfs = function(plant, r, c, dir) { 
     // Check if the current plant is outside the perimeter or doesn't match the currnt plant scan
     if(r < 0 || r >= height || c < 0 || c >= width || plant !== input[r][c]) {
         perimeter++;
+        // Added a wall, need to check if it's a new side or not...
+        determineSide(r, c, dir)
         return;
     }
     if(!addVisit(r, c)) {
@@ -45,7 +86,7 @@ let dfs = function(plant, r, c) {
 
     for(let i = 0; i < dirVec.length; i++) {
         let _dir = dirVec[i];
-        dfs(plant, r+_dir[0], c+_dir[1]);
+        dfs(plant, r+_dir[0], c+_dir[1], i);
     }
 
 }
@@ -53,10 +94,18 @@ let dfs = function(plant, r, c) {
 for(var i = 0; i < width; i++) {
     for(var j = 0; j < height; j++) {
         let plant = input[i][j];
-        dfs(plant, i, j)
+        initDirSides();
+        if(visited.has(`${i}_${j}`)) {
+            continue;
+        }
+        dfs(plant, i, j, currSide)
         // Calculate the price for this plant region
         part1 += (perimeter*area);
+        part2 += (area*sides);
         // Reset perimeter and area
+        console.log(`--Plant ${plant} has--\nArea: Sides: ${sides}\nPerimeter: ${perimeter}\nArea: ${area}`);
+        currSide = -1;
+        sides = 0;
         perimeter = 0;
         area = 0;
     }
